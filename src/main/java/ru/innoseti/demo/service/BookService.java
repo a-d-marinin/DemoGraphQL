@@ -25,17 +25,21 @@ public class BookService {
     @Transactional
     public Book saveBook(BookInput bookInput) {
         Optional<Book> optionalBook = bookRepository.findByTitle(bookInput.title());
-
         Book book = optionalBook.orElseGet(() -> mapper.INSTANCE.toEntity(bookInput));
 
-        Set<Author> authorsToSave = bookInput.authors().stream()
-                .map(authorName -> authorRepository.findByName(authorName)
-                        .orElseGet(() -> {
-                            Author author = new Author();
-                            author.setName(authorName);
-                            return authorRepository.save(author);
-                        }))
+        Set<String> authorNames = bookInput.authors();
+        Set<Author> authorsToSave = authorRepository.findByNameIn(authorNames);
+
+        Set<Author> newAuthors = authorNames.stream()
+                .filter(authorName -> authorsToSave.stream().noneMatch(author -> author.getName().equals(authorName)))
+                .map(authorName -> {
+                    Author author = new Author();
+                    author.setName(authorName);
+                    return authorRepository.save(author);
+                })
                 .collect(Collectors.toSet());
+
+        authorsToSave.addAll(newAuthors);
 
         book.setAuthors(authorsToSave);
         return bookRepository.save(book);
