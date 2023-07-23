@@ -7,6 +7,7 @@ import ru.innoseti.demo.model.Book;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
@@ -14,4 +15,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     @EntityGraph(attributePaths = "authors")
     Optional<Book> findByTitle(String title);
+
+    @EntityGraph(attributePaths = "authors")
+    Set<Book> findByTitleIn(Set<String> bookTitles);
 }

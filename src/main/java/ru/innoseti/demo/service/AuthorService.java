@@ -27,19 +27,22 @@ public class AuthorService {
         Optional<Author> optionalAuthor = authorRepository.findByName(authorInput.name());
         Author author = optionalAuthor.orElseGet(() -> mapper.INSTANCE.toEntity(authorInput));
 
-        Set<Book> booksToSave = authorInput.books().stream()
+        Set<String> bookTitles = authorInput.books();
+        Set<Book> booksToSave = bookRepository.findByTitleIn(bookTitles);
+
+        Set<Book> newBooks = bookTitles.stream()
+                .filter(title -> booksToSave.stream().noneMatch(book -> book.getTitle().equals(title)))
                 .map(title -> {
-                    Optional<Book> optionalBook = bookRepository.findByTitle(title);
-                    Book book = optionalBook.orElseGet(() -> {
-                        Book newBook = new Book();
-                        newBook.setTitle(title);
-                        newBook.setAuthors(new HashSet<>());
-                        return newBook;
-                    });
-                    book.getAuthors().add(author);
-                    return book;
+                    Book newBook = new Book();
+                    newBook.setTitle(title);
+                    newBook.setAuthors(new HashSet<>());
+                    return newBook;
                 })
                 .collect(Collectors.toSet());
+
+        booksToSave.addAll(newBooks);
+
+        booksToSave.forEach(book -> book.getAuthors().add(author));
 
         author.setBooks(booksToSave);
         return authorRepository.save(author);

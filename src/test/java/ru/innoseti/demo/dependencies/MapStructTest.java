@@ -18,10 +18,8 @@ public class MapStructTest {
         assertEquals(uuid, testOutput.id);
     }
 
-
     record TestInput(UUID id) {
     }
-
 
     record TestOutput(UUID id) {
     }
