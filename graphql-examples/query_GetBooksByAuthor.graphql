@@ -1,0 +1,10 @@
+query GetBooksByAuthor($author: String!) {
+  getBooksByAuthor(author: $author) {
+    id
+    title
+    authors {
+      id
+      name
+    }
+  }
+}

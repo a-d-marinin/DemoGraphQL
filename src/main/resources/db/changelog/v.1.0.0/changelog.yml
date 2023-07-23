@@ -1,0 +1,81 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: '1'
+      author: Marinin
+      changes:
+        - createTable:
+            tableName: authors
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: '2'
+      author: Marinin
+      changes:
+        - createTable:
+            tableName: books
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: '3'
+      author: Marinin
+      changes:
+        - createTable:
+            tableName: book_author
+            columns:
+              - column:
+                  name: book_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: author_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: '4'
+      author: Marinin
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: book_author
+            baseColumnNames: book_id
+            referencedTableName: books
+            referencedColumnNames: id
+            constraintName: FK_book_author_book_id
+
+  - changeSet:
+      id: '5'
+      author: Marinin
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: book_author
+            baseColumnNames: author_id
+            referencedTableName: authors
+            referencedColumnNames: id
+            constraintName: FK_book_author_author_id
